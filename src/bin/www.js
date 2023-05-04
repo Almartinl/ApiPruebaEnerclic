@@ -1,88 +1,79 @@
 #!/usr/bin/env node
 
 /**
- * Module dependencies.
+ * Dependencias del módulo.
  */
 import http from "http";
-import app from "../index.js"
+import app from "../index.js";
 
 /**
- * Get port from environment and store in Express.
+ * Obtener puerto desde el ambiente y guardarlo en Express.
  */
-
-const port = normalizePort(process.env.PORT || 3000)
-app.set('port', port)
+const port = normalizePort(process.env.PORT || 3000);
+app.set("port", port);
 
 /**
- * Create HTTP server.
+ * Crear servidor HTTP.
  */
-
-const server = http.createServer(app)
+const server = http.createServer(app);
 
 /**
- * Listen on provided port, on all network interfaces.
+ * Escuchar en el puerto proporcionado, en todas las interfaces de red.
  */
-
-server.listen(port)
-server.on('error', onError)
-server.on('listening', onListening)
+server.listen(port);
+server.on("error", onError);
+server.on("listening", onListening);
 
 /**
- * Normalize a port into a number, string, or false.
+ * Normalizar un puerto en un número, string, o false.
  */
-
-function normalizePort (val) {
-  const port = parseInt(val, 10)
+function normalizePort(val) {
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
-    return val
+    return val;
   }
 
   if (port >= 0) {
     // port number
-    return port
+    return port;
   }
 
-  return false
+  return false;
 }
 
 /**
- * Event listener for HTTP server "error" event.
+ * Event listener para el evento "error" del servidor HTTP.
  */
 /* eslint no-unreachable: */
-function onError (error) {
-  if (error.syscall !== 'listen') {
-    throw error
+function onError(error) {
+  if (error.syscall !== "listen") {
+    throw error;
   }
 
-  const bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port
+  const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
-  // handle specific listen errors with friendly messages
+  // manejar errores específicos de escucha con mensajes amigables
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges')
-      process.exit(1)
-      break
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use')
-      process.exit(1)
-      break
+    case "EACCES":
+      console.error(bind + " requiere privilegios elevados");
+      process.exit(1);
+      break;
+    case "EADDRINUSE":
+      console.error(bind + " ya está en uso");
+      process.exit(1);
+      break;
     default:
-      throw error
+      throw error;
   }
 }
 
 /**
- * Event listener for HTTP server "listening" event.
+ * Event listener para el evento "listening" del servidor HTTP.
  */
-
-function onListening () {
-  const addr = server.address()
-  const bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port
-  console.log('Listening on ' + bind)
+function onListening() {
+  const addr = server.address();
+  const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  console.log("Escuchando en " + bind);
 }
