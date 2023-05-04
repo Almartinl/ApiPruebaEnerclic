@@ -36,7 +36,6 @@ controller.loginUser = async (req, res) => {
     let user = await dao.getUserByEmail(email);
     if (user.length <= 0) return res.status(404).send("usuario no registrado");
     const clientPassword = md5(password);
-    console.log(user);
     const [newUser] = user;
 
     if (newUser.password !== clientPassword)
