@@ -47,6 +47,7 @@ controller.loginUser = async (req, res) => {
 
     const jwtConstructor = new SignJWT({
       id: newUser.id,
+      email: newUser.email
     });
 
     const key = createSecretKey(Buffer.from("12345"));
@@ -56,7 +57,7 @@ controller.loginUser = async (req, res) => {
     const jwt = await jwtConstructor
       .setProtectedHeader({ alg: "HS256", typ: "JWT" })
       .setIssuedAt()
-      .setExpirationTime("1h")
+      .setExpirationTime("24h")
       .sign(encoder.encode(key));
 
     return res.send({ jwt });
