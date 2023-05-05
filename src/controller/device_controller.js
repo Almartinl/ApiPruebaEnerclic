@@ -1,31 +1,45 @@
-import dao from "../services/dao.js"; // Importamos el módulo dao desde el archivo dao.js
-import jwtDecode from "jwt-decode"; // Importamos el módulo jwt-decode para decodificar el token JWT
+import dao from "../services/dao.js";
+import jwtDecode from "jwt-decode";
+import { checkAuth } from "../utils/handle_errors.js";
 
-const controller = {}; // Creamos un objeto controlador vacío
+const controller = {};
 
-// Definimos la función getData del controlador como una función asíncrona que recibe los objetos req (solicitud) y res (respuesta) como parámetros
+// Definimos la función getData del controlador como una función asíncrona que recibe los objetos "req" y "res" como parámetros para obtener los datos de los dispositivos y ordenarlos jerarquicamente
 controller.getData = async (req, res) => {
-  const authHeader = req.headers.authorization; // Obtenemos el encabezado de autenticación de la solicitud
-  if (!authHeader) {
-    // Si no se proporciona un encabezado de autenticación
-    res
-      .status(401)
-      .json({ error: "No se proporcionó un token de autenticación" }); // Enviamos una respuesta de error 401 (No autorizado) y un mensaje de error
-    return; // Salimos de la función
-  }
-
-  const token = authHeader.split(" ")[1]; // Obtenemos el token JWT a partir del encabezado de autenticación
+  const authHeader = req.headers.authorization;
   try {
-    const decoded = jwtDecode(token); // Decodificamos el token JWT
-    const user = await dao.getUserByEmail(decoded.email); // Buscamos al usuario en la base de datos a partir del correo electrónico codificado en el token JWT
-    if (user.length <= 0) return res.status(404).send("usuario no registrado"); // Si el usuario no está registrado en la base de datos, enviamos una respuesta de error 404 (No encontrado) y un mensaje de error
-    const data = await dao.getData(); // Obtenemos los datos de la base de datos utilizando el módulo dao
-    res.send(data); // Enviamos los datos como respuesta de la solicitud
+    const token = authHeader.split(" ")[1];
+    const decoded = jwtDecode(token);
+    const user = await dao.getUserByEmail(decoded.email);
+    if (user.length <= 0) return res.status(404).send("usuario no registrado");
+    const data = await dao.getData();
+
+    function sortData(array) {
+      let tree = {};
+      let result = [];
+
+      array.forEach((node) => {
+        tree[node.numserie] = { ...node, children: [] };
+      });
+
+      array.forEach((node) => {
+        if (node.padre === "NULL") {
+          result.push(tree[node.numserie]);
+        } else {
+          tree[node.padre].children.push(tree[node.numserie]);
+        }
+      });
+
+      return result;
+    }
+
+    const response = sortData(data);
+
+    return res.status(200).send(response);
   } catch (e) {
-    // Si ocurre un error durante la ejecución de la función try
     console.log(e);
-    res.status(400).send("Error al obtener los datos");
+    res.status(500).send("Error al obtener los datos");
   }
 };
 
-export default controller; // Exportamos el objeto controlador para poder utilizarlo en otros archivos del proyecto.
+export default controller;
