@@ -26,7 +26,7 @@ controller.createUser = async (req, res) => {
     }
   } catch (e) {
     console.log(e.message);
-    res.status(500);
+    res.sendStatus(500);
   }
 };
 
@@ -65,7 +65,7 @@ controller.loginUser = async (req, res) => {
     return res.send({ jwt });
   } catch (e) {
     console.log(e.message);
-    res.status(500);
+    res.sendStatus(500);
   }
 };
 
