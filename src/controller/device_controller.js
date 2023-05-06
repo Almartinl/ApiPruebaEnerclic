@@ -38,7 +38,7 @@ controller.getData = async (req, res) => {
     return res.status(200).send(response);
   } catch (e) {
     console.log(e);
-    res.status(500).send("Error al obtener los datos");
+    res.status(500);
   }
 };
 
